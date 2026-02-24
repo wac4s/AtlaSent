@@ -1,0 +1,72 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+
+  # ─── Job 1: Test ──────────────────────────────────────────
+  test:
+    name: Lint & Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install flake8
+
+      - name: Lint with flake8
+        run: flake8 . --ignore=E501,W503 --exclude=.git,__pycache__,.venv
+
+      - name: Run pytest
+        run: pytest tests/ -v
+
+  # ─── Job 2: AtlaSent Gate ─────────────────────────────────
+  gate:
+    name: AtlaSent Deployment Gate
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install gate dependencies
+        run: pip install requests python-dotenv   # ← both packages
+
+      - name: Run AtlaSent Gate
+        env:
+          ATLASENT_API_KEY:  ${{ secrets.ATLASENT_API_KEY }}
+          ATLASENT_BASE_URL: ${{ secrets.ATLASENT_BASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          GITHUB_RUN_ID:     ${{ github.run_id }}
+        run: python scripts/atlasent_gate.py
+
+  # ─── Job 3: Deploy to Railway ─────────────────────────────
+  deploy:
+    name: Deploy to Railway
+    needs: gate
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    container: ghcr.io/railwayapp/cli:latest   # ← official Railway CLI container
+    env:
+      RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+      SVC_ID:        ${{ secrets.RAILWAY_SERVICE_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy to Railway
+        run: railway up --service=${{ env.SVC_ID }} --detach

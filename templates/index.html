@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Glassmorphism Calculator</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+  <!-- Animated background blobs -->
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+
+  <div class="wrapper">
+    <div class="calculator" id="calculator">
+
+      <!-- Display -->
+      <div class="display">
+        <div class="expression" id="expression"></div>
+        <div class="result" id="result">0</div>
+      </div>
+
+      <!-- History Panel -->
+      <div class="history" id="history">
+        <span class="history-title">History</span>
+        <ul id="historyList"></ul>
+      </div>
+
+      <!-- Buttons -->
+      <div class="buttons">
+        <!-- Row 1 -->
+        <button class="btn util" data-action="clear">AC</button>
+        <button class="btn util" data-action="sign">+/-</button>
+        <button class="btn util" data-action="percent">%</button>
+        <button class="btn operator" data-action="operator" data-value="/">÷</button>
+
+        <!-- Row 2 -->
+        <button class="btn number" data-action="digit" data-value="7">7</button>
+        <button class="btn number" data-action="digit" data-value="8">8</button>
+        <button class="btn number" data-action="digit" data-value="9">9</button>
+        <button class="btn operator" data-action="operator" data-value="*">×</button>
+
+        <!-- Row 3 -->
+        <button class="btn number" data-action="digit" data-value="4">4</button>
+        <button class="btn number" data-action="digit" data-value="5">5</button>
+        <button class="btn number" data-action="digit" data-value="6">6</button>
+        <button class="btn operator" data-action="operator" data-value="-">−</button>
+
+        <!-- Row 4 -->
+        <button class="btn number" data-action="digit" data-value="1">1</button>
+        <button class="btn number" data-action="digit" data-value="2">2</button>
+        <button class="btn number" data-action="digit" data-value="3">3</button>
+        <button class="btn operator" data-action="operator" data-value="+">+</button>
+
+        <!-- Row 5 -->
+        <button class="btn number wide" data-action="digit" data-value="0">0</button>
+        <button class="btn number" data-action="dot">.</button>
+        <button class="btn equal" data-action="equals">=</button>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
