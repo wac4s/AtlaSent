@@ -7,6 +7,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-EXPOSE 5000
+EXPOSE 8080
 
-CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:5000", "--workers", "2"]
+# ← KEY FIX: use sh -c so $PORT expands at runtime
+CMD ["sh", "-c", "gunicorn app:app --bind 0.0.0.0:${PORT:-8080} --workers 2"]
