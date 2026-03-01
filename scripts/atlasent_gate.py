@@ -1,6 +1,9 @@
 # working script
 
-import os, sys, uuid, requests
+import os
+import sys
+import uuid
+import requests
 from dotenv import load_dotenv, find_dotenv
 
 load_dotenv(find_dotenv())
