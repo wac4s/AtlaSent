@@ -10,7 +10,7 @@ def index():
     return render_template("index.html")
 
 
-@app.route("/calculate", methods=["POST"])  # ← exactly 2 blank lines
+@app.route("/calculate", methods=["POST"])
 def calculate():
     data = request.get_json()
     expression = data.get("expression", "").strip()
