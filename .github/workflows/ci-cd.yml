@@ -2,13 +2,12 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [main]
+    branches: [master]
   pull_request:
-    branches: [main]
+    branches: [master]
 
 jobs:
 
-  # ─── Job 1: Test ──────────────────────────────────────────
   test:
     name: Lint & Test
     runs-on: ubuntu-latest
@@ -28,13 +27,11 @@ jobs:
       - name: Run pytest
         run: pytest tests/ -v
 
-  # ─── Job 2: AtlaSent Gate ─────────────────────────────────
   gate:
     name: AtlaSent Deployment Gate
     needs: test
     runs-on: ubuntu-latest
-    environment: env-ci          # ← ADD THIS
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment: env-ci
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -48,20 +45,7 @@ jobs:
           ATLASENT_BASE_URL: ${{ secrets.ATLASENT_BASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
           GITHUB_RUN_ID:     ${{ github.run_id }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_SHA:        ${{ github.sha }}
+          GITHUB_REF:        ${{ github.ref }}
         run: python scripts/atlasent_gate.py
-
-  # ─── Job 3: Deploy to Railway ─────────────────────────────
-  deploy:
-    name: Deploy to Railway
-    needs: gate
-    runs-on: ubuntu-latest
-    environment: env-ci          # ← ADD THIS
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install Railway CLI
-        run: npm install -g @railway/cli
-      - name: Deploy to Railway
-        run: railway up --service=${{ secrets.RAILWAY_SERVICE_ID }} --detach
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
