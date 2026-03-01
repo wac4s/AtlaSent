@@ -26,6 +26,9 @@ jobs:
         run: flake8 . --ignore=E501,W503 --exclude=.git,__pycache__,.venv
       - name: Run pytest
         run: pytest tests/ -v
+        env:
+          PYTHONPATH: .
+
 
   gate:
     name: AtlaSent Deployment Gate
