@@ -2,20 +2,15 @@ import os
 import math
 from flask import Flask, render_template, request, jsonify
 
+app = Flask(__name__)  # ← only 1 blank line after imports (fine)
 
 
-app = Flask(__name__)
-
-
-
-@app.route("/")
+@app.route("/")  # ← exactly 2 blank lines before each route
 def index():
     return render_template("index.html")
 
 
-
-
-@app.route("/calculate", methods=["POST"])
+@app.route("/calculate", methods=["POST"])  # ← exactly 2 blank lines
 def calculate():
     data = request.get_json()
     expression = data.get("expression", "").strip()
@@ -28,7 +23,6 @@ def calculate():
         safe_locals = {k: v for k, v in math.__dict__.items() if not k.startswith("__")}
         result = eval(expression, safe_globals, safe_locals)  # noqa: S307
 
-        # Format result: remove trailing zeros for floats
         if isinstance(result, float):
             if result == int(result):
                 result = int(result)
@@ -44,5 +38,5 @@ def calculate():
 
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8080))  # ← match the Dockerfile fallback
+    port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port, debug=False)

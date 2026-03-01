@@ -14,7 +14,7 @@ print("RUNNING FILE:", __file__)
 print("=" * 60)
 
 BASE_URL = os.environ["ATLASENT_BASE_URL"]
-API_KEY  = os.environ["ATLASENT_API_KEY"]
+API_KEY = os.environ["ATLASENT_API_KEY"]
 ANON_KEY = os.environ["SUPABASE_ANON_KEY"]
 
 headers = {
