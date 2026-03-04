@@ -2,7 +2,7 @@ import os
 import math
 from flask import Flask, render_template, request, jsonify
 
-app = Flask(__name__)  # ← only 1 blank line after imports (fine)
+app = Flask(__name__)
 
 
 @app.route("/")  # ← exactly 2 blank lines before each route
